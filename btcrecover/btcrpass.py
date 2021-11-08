@@ -7541,6 +7541,9 @@ def count_and_check_eta(est):
 SECONDS_BEFORE_DISPLAY    = 5.0
 PASSWORDS_BETWEEN_UPDATES = 100000
 def password_generator_factory(chunksize = 1, est_secs_per_password = 0):
+    iterator = itertools.permutations([item for sublist in token_lists for item in sublist])
+    return ([el] for el in iterator), 0
+
     # If est_secs_per_password is zero, only skipping is performed;
     # if est_secs_per_password is non-zero, all passwords (including skipped ones) are counted.
 
