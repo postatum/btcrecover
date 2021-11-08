@@ -7953,6 +7953,7 @@ def main():
     try:
         for password_found, passwords_tried_last in password_found_iterator:
             if password_found:
+                print("\n\n\nPASSPHRASE:\n", ' '.join(password_found), '\n\n\n')
                 if pool:
                     # Close the pool, but don't wait for (join) processes to exit gracefully on
                     # the off chance one is in an inconsistent state (otherwise the found password
