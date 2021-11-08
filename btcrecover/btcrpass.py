@@ -6133,6 +6133,13 @@ def parse_tokenlist(tokenlist_file, first_line_num = 1):
         if new_list[1] == "+" and len(new_list) > 2:
             del new_list[0:2]
 
+        # If a "&" is present at the beginning followed by at least one token,
+        # then tokens in the line are a "group", meaning they come exactly one
+        # after another. We also make the whole line required.
+        if len(new_list) > 2 and new_list[1] == "&":
+            del new_list[0:2]
+            new_list = [' '.join(new_list)]
+
         # Check token syntax and convert any anchored tokens to an AnchoredToken object
         for i, token in enumerate(new_list):
             if token is None: continue

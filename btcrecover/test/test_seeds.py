@@ -1585,17 +1585,29 @@ class TestRecoverySeedListsGenerators(unittest.TestCase):
                                                                 'oyster', 'team', 'home', 'april', 'travel',
                                                                 'barrel']]])
 
+    def test_seedlist_groups(self):
+        args = " --listpass --seedgenerator --max-tokens 3 --min-tokens 3".split()
+        self.tokenlist_tester("tokenlist-groups.txt", [[
+            ('apple quietly', 'eats', 'john'),
+            ('apple quietly', 'john', 'eats'),
+            ('eats', 'apple quietly', 'john'),
+            ('eats', 'john', 'apple quietly'),
+            ('john', 'apple quietly', 'eats'),
+            ('john', 'eats', 'apple quietly')
+        ]], args)
+
     def test_tokenlist(self):
         self.tokenlist_tester("SeedTokenListTest.txt")
 
-    def tokenlist_tester(self, tokenlistfile, correct_seedlist=None):
+    def tokenlist_tester(self, tokenlistfile, correct_seedlist=None, args=None):
         if correct_seedlist is None:
             correct_seedlist = self.expected_passwordlist
         # Check to see if the Token List file exists (and if not, skip)
         if not os.path.isfile("./btcrecover/test/test-listfiles/" + tokenlistfile):
             raise unittest.SkipTest("requires ./btcrecover/test/test-listfiles/" + tokenlistfile)
 
-        args = " --listpass --seedgenerator --max-tokens 12 --min-tokens 12".split()
+        if args is None:
+            args = " --listpass --seedgenerator --max-tokens 12 --min-tokens 12".split()
 
         btcrpass.parse_arguments(["--tokenlist"] + ["./btcrecover/test/test-listfiles/" + tokenlistfile] + args,
                                  disable_security_warning_param=True)
