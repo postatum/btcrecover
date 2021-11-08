@@ -7541,8 +7541,6 @@ def count_and_check_eta(est):
 SECONDS_BEFORE_DISPLAY    = 5.0
 PASSWORDS_BETWEEN_UPDATES = 100000
 def password_generator_factory(chunksize = 1, est_secs_per_password = 0):
-    iterator = itertools.permutations([item for sublist in token_lists for item in sublist])
-    return ([el] for el in iterator), 0
 
     # If est_secs_per_password is zero, only skipping is performed;
     # if est_secs_per_password is non-zero, all passwords (including skipped ones) are counted.
@@ -7551,6 +7549,8 @@ def password_generator_factory(chunksize = 1, est_secs_per_password = 0):
     if not est_secs_per_password:
         # The simple case where there's nothing to skip, just return an unmodified password_generator()
         if args.skip <= 0:
+            iterator = itertools.permutations([item for sublist in token_lists for item in sublist])
+            return ([[item for sublist in el for item in sublist.split(' ')]] for el in iterator), 0
             return password_generator(chunksize), 0
         # The still fairly simple case where there's not much to skip, just skip it all at once
         elif args.skip <= PASSWORDS_BETWEEN_UPDATES:
@@ -7566,7 +7566,8 @@ def password_generator_factory(chunksize = 1, est_secs_per_password = 0):
     assert args.skip >= 0
     sys_stderr_isatty = sys.stderr.isatty()
     max_seconds = args.max_eta * 3600  # max_eta is in hours
-    passwords_count_iterator = password_generator(PASSWORDS_BETWEEN_UPDATES, only_yield_count=True)
+    passwords_count_iterator = itertools.permutations([item for sublist in token_lists for item in sublist])
+    passwords_count_iterator = (1 for el in passwords_count_iterator)
     passwords_counted = 0
     is_displayed = False
     start = time.perf_counter() if sys_stderr_isatty else None
